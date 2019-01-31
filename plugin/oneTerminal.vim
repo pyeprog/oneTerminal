@@ -72,7 +72,7 @@ augroup terminalOperate
 augroup END
 
 
-nnoremap s:terminal_key :call TerminalToggle()<CR>
-tnoremap s:terminal_key <C-w>N:call TerminalToggle()<CR>
+execute 'nnoremap '.s:terminal_key.':call TerminalToggle()<CR>'
+execute 'tnoremap '.s:terminal_key.'<C-w>N:call TerminalToggle()<CR>'
 tnoremap <C-[> <C-w>N
 

@@ -1,6 +1,7 @@
 let s:terminal_window_position = get(g:, "terminal_window_position", 'right')
 let s:terminal_window_id = -1
 let s:terminal_buffer_id = -1
+let s:terminal_key = get(g:, "terminal_key", '<F7>')
 
 " version lower than 8.01 has no terminal mode
 if v:version < 801
@@ -71,7 +72,7 @@ augroup terminalOperate
 augroup END
 
 
-nnoremap <F7> :call TerminalToggle()<CR>
-tnoremap <F7> <C-w>N:call TerminalToggle()<CR>
+nnoremap s:terminal_key :call TerminalToggle()<CR>
+tnoremap s:terminal_key <C-w>N:call TerminalToggle()<CR>
 tnoremap <C-[> <C-w>N
 

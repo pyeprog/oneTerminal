@@ -2,6 +2,11 @@ let s:terminal_window_position = get(g:, "terminal_window_position", 'right')
 let s:terminal_window_id = -1
 let s:terminal_buffer_id = -1
 
+" version lower than 8.01 has no terminal mode
+if v:version < 801
+    finish
+endif
+
 function MoveWindow()
     if s:terminal_window_position ==? 'left'
         wincmd H

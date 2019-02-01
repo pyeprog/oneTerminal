@@ -71,7 +71,10 @@ augroup terminalOperate
     au QuitPre * call TerminalClose()
 augroup END
 
+command! UnfocusTerminal <C-w>N
+command! OneTerminalToggle :call TerminalToggle()
+command! OneTerminalToggleFromTerminal UnfocusTerminal :call TerminalToggle()
 
-execute 'nnoremap '.s:terminal_key.' :call TerminalToggle()<CR>'
-execute 'tnoremap '.s:terminal_key.' <C-w>N:call TerminalToggle()<CR>'
+execute 'nnoremap '.s:terminal_key.' :OneTerminalToggle<CR>'
+execute 'tnoremap '.s:terminal_key.' :OneTerminalToggleFromTerminal<CR>'
 tnoremap <C-[> <C-w>N

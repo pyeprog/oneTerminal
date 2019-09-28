@@ -21,7 +21,7 @@ Use <leader>t for terminal toggling
 add the following statements into your .vimrc
 
 ### Plug
-`Plug pyeprog/oneTerminal`
+`Plug 'pyeprog/oneTerminal'`
 
 ### Vundle
-`Bundle pyeprog/oneTerminal`
+`Bundle 'pyeprog/oneTerminal'`

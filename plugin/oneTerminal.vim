@@ -1,80 +1,44 @@
-let s:terminal_window_position = get(g:, "terminal_window_position", 'right')
-let s:terminal_window_id = -1
-let s:terminal_buffer_id = -1
-let s:terminal_key = get(g:, "terminal_key", '<F7>')
+" One terminal
 
-" version lower than 8.01 has no terminal mode
 if v:version < 801
     finish
 endif
 
-function MoveWindow()
-    if s:terminal_window_position ==? 'left'
-        wincmd H
-    elseif s:terminal_window_position ==? 'top'
-        wincmd K
-    elseif s:terminal_window_position ==? 'bottom'
-        wincmd J
-    else 
-        wincmd L
-    endif
-endfunction
+let g:terminal_status = 0
 
+tnoremap <esc> <c-w>N
 
-function TerminalOpen()
-    if !bufexists(s:terminal_buffer_id)
-        verti term ++kill="kill" ++norestore
-        call MoveWindow()
-        let s:terminal_window_id = win_getid()
-        let s:terminal_buffer_id = bufnr('%')
-        silent file oneterminal
-    else
-        if !win_gotoid(s:terminal_window_id)
-            sp
-            call MoveWindow()
-            buffer! oneterminal
-            let s:terminal_window_id = win_getid()
+function! TerminalToggle()
+    if g:terminal_status == 0
+        let g:terminal_status = 1
+        if len(term_list()) == 0
+            execute "term"
         else
-            call MoveWindow()
+            execute "sb! " . g:terminal_buf
         endif
-    endif
-endfunction
-
-
-function TerminalHide()
-    if win_gotoid(s:terminal_window_id)
-        hide
-    endif
-endfunction
-
-
-function TerminalClose()
-    if bufexists(s:terminal_buffer_id)
-        silent bd! oneterminal
-        let s:terminal_buffer_id = -1
-    endif
-endfunction
-
-
-function TerminalToggle()
-    if win_gotoid(s:terminal_window_id)
-        silent call TerminalHide()
     else
-        silent call TerminalOpen()
+        if len(term_list()) > 0
+            if g:terminal_buf != bufnr('%')
+                let l:term_win_id = win_findbuf(term_list()[0])[0]
+                if !win_gotoid(l:term_win_id)
+                    return
+                endif
+            endif
+            execute "hide"
+        endif
+        let g:terminal_status = 0
     endif
+    let g:terminal_buf = term_list()[0]
 endfunction
 
 
-augroup terminalOperate
-    au!
-    au ExitPre * call TerminalClose()
-    au QuitPre * call TerminalClose()
-augroup END
+function! TerminalShutdown()
+    if len(term_list()) > 0
+        silent! execute "bd! " . g:terminal_buf
+    endif
+endfunction
 
-command! UnfocusTerminal <C-w>N
-command! OneTerminalToggle :call TerminalToggle()
-command! OneTerminalToggleFromTerminal UnfocusTerminal :call TerminalToggle()
+autocmd! ExitPre * :call TerminalShutdown()<cr>
+tnoremap <leader>t <c-w>:call TerminalToggle()<cr>
+nnoremap <leader>t :call TerminalToggle()<cr>
 
-execute 'nnoremap '.s:terminal_key.' :OneTerminalToggle<CR>'
-execute 'tnoremap '.s:terminal_key.' :OneTerminalToggleFromTerminal<CR>'
-tnoremap <C-[> <C-w>N

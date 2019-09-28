@@ -13,12 +13,15 @@ Thus to taste new feature of vim8.1, you need to build your vim from source code
 4. `make`
 5. `sudo make install`
 
-## Change key-binding for terminal toggle
-For example
-`let g:terminal_key = '<F5>'` binds F5 to toggle your terminal
+No customizable key binding provided for this version of one terminal
 
-## Configure the default terminal window position 
-`let g:terminal_window_position = 'right'`
+Use <leader>t for terminal toggling
 
-`right`, `left`, `top` and `bottom` are valid settings.
+## Install
+add the following statements into your .vimrc
 
+### Plug
+`Plug pyeprog/oneTerminal`
+
+### Vundle
+`Bundle pyeprog/oneTerminal`

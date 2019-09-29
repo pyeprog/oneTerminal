@@ -6,8 +6,6 @@ endif
 
 let g:terminal_status = 0
 
-tnoremap <esc> <c-w>N
-
 function! TerminalToggle()
     if g:terminal_status == 0
         let g:terminal_status = 1

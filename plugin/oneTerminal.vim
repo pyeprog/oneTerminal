@@ -1,6 +1,6 @@
 " One terminal
 
-if v:version < 801
+if v:version < 800
     finish
 endif
 
@@ -17,8 +17,15 @@ function! TerminalToggle()
     else
         if len(term_list()) > 0
             if g:terminal_buf != bufnr('%')
-                let l:term_win_id = win_findbuf(term_list()[0])[0]
-                if !win_gotoid(l:term_win_id)
+                let l:term_win_ids = win_findbuf(term_list()[0])
+                if len(l:term_win_ids) > 0
+                    if !win_gotoid(l:term_win_ids[0])
+                        return
+                    endif
+                else
+                    " if terminal is closed by hand
+                    let g:terminal_status = 0
+                    call TerminalToggle()
                     return
                 endif
             endif
@@ -26,17 +33,25 @@ function! TerminalToggle()
         endif
         let g:terminal_status = 0
     endif
-    let g:terminal_buf = term_list()[0]
-endfunction
-
-
-function! TerminalShutdown()
     if len(term_list()) > 0
-        silent! execute "bd! " . g:terminal_buf
+        let g:terminal_buf = term_list()[0]
     endif
 endfunction
 
-autocmd! ExitPre * :call TerminalShutdown()<cr>
+function! TerminalShutdown()
+    if len(term_list()) > 0
+        let l:shutdown_cmd = 'bd! '
+        if len(getbufinfo({'buflisted':1})) == 1
+            let l:shutdown_cmd = 'q! '
+        endif
+        silent! execute l:shutdown_cmd . g:terminal_buf
+    endif
+endfunction
+
+augroup AutoCloseTerm
+    autocmd!
+    autocmd QuitPre :call TerminalShutdown()<cr>
+augroup END
+
 tnoremap <leader>t <c-w>:call TerminalToggle()<cr>
 nnoremap <leader>t :call TerminalToggle()<cr>
-
